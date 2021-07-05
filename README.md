@@ -1,2 +1,29 @@
 # nodejsStudy
 nodejs Study
+
+---
+
+## Chap 1
+
+### Node.js 등장 배경
+JavaScript에 익숙한 개발자들이 새로운 컴퓨터 언어를 배우지 않고도 웹 페이지를 자동으로 생성하는 서버쪽 어플리케이션을 만들 수 있게 하고 싶어져서.
+
+nodejs는 자바스크립트를 이용해서 자바스크립트가 아닌 컴퓨터 자체를 제어함.
+
+Web Application
+
+---
+
+## Chap 2
+
+### 수업의 목적
+
+---
+
+## Chap 3
+
+### node.js 설치
+
+javascript로 Node.js 런타임 실행
+
+---
