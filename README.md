@@ -264,3 +264,137 @@ fs.readFile(`data/${title}`, 'utf8', function (err, description) {
 - 3번부터 인덱스 값 차곡차곡 쌓임
 
 ---
+
+## Chap 19
+
+### APP 제작 - Not Found 구현
+
+`var pathname = url.parse(_url, true).pathname;` : 현재 pathname을 가져옴.
+
+루트 디렉토리('/')에서 id 값은 undefined이므로 조건문으로 undefined 일때의 title 값 지정해주기
+
+---
+
+## Chap 20
+
+### JS 반복문
+
+``` js
+while(true)
+  console.log('C1');
+
+var i = 0;
+while(i < 5)
+{
+  console.log(i);
+  i += 1;
+}
+
+```
+
+---
+
+## Chap 21
+
+### JS 배열
+
+``` js
+var arr = ['a', 'b', 'c', 'd'];
+console.log(arr[0]);
+console.log(arr);
+console.log(arr.length);
+
+arr.push('e'); // append
+console.log(arr);
+
+```
+
+---
+
+## Chap 22
+
+### JS 배열과 반복문
+
+``` js
+
+var number = [1, 400, 12 , 34];
+var i = 0;
+var total = 0;
+while(i < number.length)
+{
+  total += number[i];
+  i += 1;
+}
+
+console.log(`total : ${total}`);
+
+```
+
+---
+
+## Chap 23
+
+### Node.js에서 파일 목록 알아내기
+
+반복문으로 파일의 갯수만큼 읽기.
+
+``` js
+var testFolder = './data';
+var fs = require('fs');
+
+fs.readdir(testFolder, (err, files) => {
+    /*
+    files.forEach(file => {
+        console.log(file);
+    });
+    */
+    console.log(files);
+})
+```
+
+---
+
+## Chap 24
+
+### 글목록 출력하기
+
+```js
+        //글 목록
+        var list = '<ul>';
+        var i = 0;
+        while (i < filelist.length) {
+          list += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+          i += 1;
+        }
+        list += '</ul>';
+
+```
+
+---
+
+## Chap 25
+
+### JS 함수 기본 문법
+
+아는 내용이라 넘어감.
+
+### 함수의 입력
+
+`console.log(Math.round(1.6));` //반올림 해주는 함수
+
+`sum(2, 4);`
+
+### 함수의 출력
+
+`return a + b;`
+
+---
+
+##  Chap 26
+
+### 함수를 이용해서 정리 정돈하기
+
+중복되는 코드 함수로 묶어주기.
+
+---
+
