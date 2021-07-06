@@ -398,3 +398,60 @@ fs.readdir(testFolder, (err, files) => {
 
 ---
 
+## Chap 27
+
+### 수업의 정상
+
+.
+
+---
+
+## Chap 28
+
+### Synchronous & asynchronous
+
+동기적인 처리 : 서버에서 요청을 보냈을 때 응답이 돌아와야 다음 동작을 수행할 수 있다. 즉 A 작업이 모두 진행 될때까지 B작업은 대기해야한다.
+
+비동기적인 처리 : 반대로 요청을 보냈을 때 응답 상태와 상관없이 다음 동작을 수행 할 수 있다. 즉 A 작업이 시작하면 동시에 B작업이 실행된다. A 작업은 결과값이 나오는대로 출력된다.
+
+### 동기와 비동기
+
+**callback 유무의 차이?**
+
+`fs.readFile(path[, option], callback)`
+
+`fs.readFileSync(path[, option])`
+
+``` js
+//readFile : 비동기적 처리 방식
+console.log('A');
+fs.readFile('syntax/sample.txt', 'utf8', (err, result) => { //비동기적 방식 nodejs가 파일이 읽는 작업이 끝나면 내부에 있는 익명 함수를 실행시킨다.
+    console.log(result);
+});
+console.log('C');
+```
+#### Node.js의 성능을 끌어올리려면 반드시 비동기적인 방식으로 처리를 해야한다.
+
+### JS - Callback
+
+callback : callback 함수 자리에 들어온 람다식은 본 함수가 실행이 다 끝난 후에 처리된다는 것을 의미함.
+
+``` js
+var a = () =>
+{
+    console.log('A');
+}
+
+a();
+
+function slowfunc(callback)
+{
+    callback();
+}
+
+slowfunc(a);
+
+```
+**자바스크립트에서는 함수가 곧 값이다**
+
+---
