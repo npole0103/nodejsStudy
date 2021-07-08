@@ -455,3 +455,165 @@ slowfunc(a);
 **자바스크립트에서는 함수가 곧 값이다**
 
 ---
+
+## Chap 29
+
+### Node.js의 패키지 매니저와 PM2
+
+Package Mannager : 패키지를 관리해주는 프로그램.
+
+NPM : Node Package Manager
+
+PM2 : `npm install pm2 -g`
+
+PM2 실행하는 법 : `pm2 start 0000.js`
+
+PM2 Monit : `pm2 monit`
+
+PM2 LIST : `pm2 list`
+
+PM2 STOP : `pm2 start 'LIST 목록 name'`
+
+PM2 실행중 코드 수정 감시 모드 : `pm2 start main.js --watch`  
+(만약 문제가 있어서 실행이 안된다면 `pm2 log`로 확인하자)
+
+---
+
+## Chap 30
+
+### HTML - form
+
+form 태그에 감싸서 전송
+
+GET 방식 / POST 방식
+
+사용자 입력 데이터는 전부 의심하기
+
+---
+
+## Chap 31
+
+### App 제작 - 글생성 UI 만들기
+``` html
+<form action="http://localhost:3000/process_create" method="POST">
+    <p>
+        <input type="text" name="title">
+    </p>
+    <p>
+        <textarea name="description"></textarea>
+    </p>
+    <p>
+        <input type="submit">
+    </p>
+</form>
+```
+
+---
+
+## Chap 32
+
+### App 제작 - POST 방식으로 전송된 데이터 받기
+
+`var app = http.createServer(function (request, response) { //서버 생성 익명 함수`
+
+request : 요청할 때 웹브라우저가 보낸 정보.
+
+response : 응답할 때 우리가 웹브라우저에 보낼 정보.
+
+``` js
+    var body = '';
+
+    request.on('data', function (data) {
+        body += data;
+
+        // Too much POST data, kill the connection!
+        // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+        if (body.length > 1e6)
+            request.connection.destroy();
+    });
+
+    request.on('end', function () {
+        var post = qs.parse(body);
+        // use post['blah'], etc.
+    });
+```
+**body로 받은 데이터를 parse 함수를 사용하여 post 정보 추출**
+``` js
+    request.on('end', () => {
+      var post = qs.parse(body); //수신된 body 정보를 parse 함수를 사용해서 post 정보 추출
+      var title = post.title;
+      var description = post.description;
+    });
+```
+
+---
+
+## Chap 33
+
+### 파일 생성과 리다이렉션
+
+파일쓰기
+
+``` js
+      fs.writeFile(`data/${title}`, description, 'utf8', (err) => 
+      {
+        response.writeHead(200);
+        response.end('success'); //파일 저장 성공
+      })
+```
+
+리다이렉션
+``` js
+      fs.writeFile(`data/${title}`, description, 'utf8', (err) => 
+      {
+        response.writeHead(302,{Location: `/?id=${title}`}); //302는 페이지 리다이렉션임
+        response.end('success'); //파일 저장 성공
+      })
+```
+
+---
+
+## Chap 34
+
+### 글수정 - 수정 링크 생성
+
+`<a href="/update?id=${title}">Update</a>`
+
+---
+
+## Chap 35
+
+### 글수정 - 수정할 정보 전송
+
+``` html
+        <form action="http://localhost:3000/update_process" method="POST">
+          <input type="hidden" name="id" value="${title}">
+          <p>
+              <input type="text" name="title" placeholder="title" value="${title}">
+          </p>
+          <p>
+              <textarea name="description" placeholder="description">${description}</textarea>
+          </p>
+          <p>
+              <input type="submit">
+          </p>
+          </form>
+```
+
+---
+
+## Chap 36
+
+### 글수정 - 파일명 변경, 내용저장
+
+``` js
+      fs.rename(`data/${id}`, `data/${title}`, (err)=>{ //oldPath, newPath, callback
+        fs.writeFile(`data/${title}`, description, 'utf8', (err) =>  //파일 변경된 이후이기 때문에 title 값 가능
+        {
+          response.writeHead(302,{Location: `/?id=${title}`}); //302는 페이지 리다이렉션임
+          response.end('success'); //파일 저장 성공
+        })
+      });
+```
+
+---
