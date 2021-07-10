@@ -617,3 +617,280 @@ response : 응답할 때 우리가 웹브라우저에 보낼 정보.
 ```
 
 ---
+
+## Chap 37
+
+### 글삭제 - 삭제버튼 구현
+
+삭제 버튼을 링크로 구현하면 대단히 잘못된 것임.
+
+링크는 클릭했을 때 이동하는데, 누군가에게 해당 주소를 보낼 수도 있기 때문에.
+
+Get 방식으로 Delete를 구현하면 안됨. Form으로 구현.
+
+``` html
+          <form action="delete_process" method="post">
+              <input type="hidden" name="id" value=${title}>
+              <input type="submit" value="delete">
+          </form>
+```
+
+---
+
+## Chap 38
+
+### 글삭제 - 기능 완성
+
+``` js
+  else if (pathname === '/delete_process')
+  {
+    var body = '';
+
+    //웹브라우저가 POST 방식으로 데이터를 보낼 때 받는 것
+    request.on('data', (data) => {
+      body += data;
+      // Too much POST data, kill the connection!
+      // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+      if (body.length > 1e6)
+        request.connection.destroy();
+    });
+
+    //end 콜백이 실행될 때는 정보 수신이 끝났다는 의미.
+    request.on('end', () => {
+      var post = qs.parse(body); //수신된 body 정보를 parse 함수를 사용해서 post 정보 추출
+      var id = post.id; //기존 타이틀
+
+      fs.unlink(`data/${id}`, (err) => {
+        response.writeHead(302, {Location: `/`}); //리다이렉션 302
+        response.end(); //쿼리 데이터 id값 가져옴.
+      });
+    });
+  }
+```
+
+---
+
+## Chap 39
+
+### 객체의 형식
+
+Object VS Array
+
+Obejct : 순서가 없는 정보 저장
+
+Array : 순서에 따라서
+
+---
+
+## Chap 40
+
+### 객체의 반복
+
+``` js
+var members = ['hi', 'bye', 'hello'];
+
+var i = 0;
+for(var i = 0; i < members.length ; i++)
+{
+    console.log(members[i]);
+}
+
+var roles = {
+    'programmer' : 'hi',
+    'designer' : 'bye',
+    'manager' : 'hello'
+}
+
+//둘은 동일함.
+console.log(roles.designer);
+console.log(roles['designer']);
+
+var i = 0;
+for(var name in roles)
+    console.log(name, "=> ",roles[name]); //name은 key값, roles[name]은 value 값
+```
+
+---
+
+## Chap 41
+
+### 객체 값으로서의 함수
+
+OOP : 객체지향 프로그래밍
+
+JS에서 함수는 값의 형태를 띈다.
+
+배열의 원소로써 함수가 존재할 수 있다.
+
+``` js
+var f = function()
+{
+    console.log(1);
+    console.log(2);
+}
+
+var a = [f, f]; //배열에 함수
+
+a[0]();
+a[1]();
+
+var o = { //오브젝트에 함수
+    func:f
+}
+
+o.func();
+
+```
+
+---
+
+## Chap 42
+
+### 객체-데이터와 처리 방법을 담는 그릇으로써 객체
+
+``` js
+var v1 = 'v1';
+var v2 = 'v2';
+
+var o = {
+    v1:'v1',
+    v2:'v2',
+    f1:() => {console.log(this.v1);},
+    f2:() => {console.log(this.v2);}
+}
+
+o.f1();
+o.f2();
+
+```
+
+---
+
+## Chap 43
+
+### App 제작 - 템플릿 기능 정리정돈하기
+
+``` js
+var template = { //템플릿 객체 생성
+  html:(title, list, body, control) => {
+    return `
+    <!doctype html>
+    <html>
+    <head>
+      <title>WEB1 - ${title}</title>
+      <meta charset="utf-8">
+    </head>
+    <body>
+      <h1><a href="/">WEB</a></h1>
+      ${list}
+      ${control}
+      ${body}
+    </body>
+    </html>
+    `;
+  },
+
+  list: (filelist) => {
+    //글 목록
+    var list = '<ul>';
+    var i = 0;
+    while (i < filelist.length) {
+      list += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+      i += 1;
+    }
+    list += '</ul>';
+    return list;
+  }
+}
+```
+
+---
+
+## Chap 44
+
+### 모듈의 형식
+
+`module.exports = M;` 객체 M을 모듈화 한다.
+
+`var M = require('./mPart.js');` mPart.js에 있는 모듈을 사용하겠다.
+
+---
+
+## Chap 45
+
+### 모듈의 활용
+
+main.js 내 template 모듈화
+
+---
+
+## Chap 46
+
+### 입력정보에 대한 보안
+
+URL 파라미터에 `../password.js` 입력하면 패스워드 정보가 화면에 출력될 수가 있음.
+
+Node.js에는 path라는 모듈이 존재
+
+``` js
+var path = require('path');
+
+//경로 인자 값을 걸러줌
+path.parse("../password.js").base; //출력값은 password.js
+
+
+var filteredId = path.parse(queryData.id).base;
+
+```
+
+---
+
+## Chap 47
+
+### 출력정보에 대한 보안
+
+XSS : 크로스 사이트 스크립팅
+
+**sanitize-html**
+
+`npm init`
+
+`npm install -S sanitize-html`
+
+`package.json` 파일에선 현재 어플리케이션이 의존하고 있는 소프트웨어를 알려줌.
+
+``` js
+          //xss 방어용 Sanitize 모듈 사용
+          var sanitizedTitle = sanitizeHtml(title);
+          var sanitizedDescription = sanitizeHtml(description);
+```
+
+스크립트 태그를 삭제해버림.
+
+`allowedTags:['h1']` 옵션으로 특정 태그를 허용할 수 있음.
+
+`var sanitizedDescription = sanitizeHtml(description, { allowedTags:['h1'], allowedTags:['h2'] });`
+
+---
+
+## Chap 48
+
+### API와 CreateServer
+
+`fs.readFile()` 이런 것들을 API라고 함.
+
+[NodeJs 모듈](https://nodejs.org/dist/latest-v14.x/docs/api/)
+
+`http.createServer([requestListener])`
+
+---
+
+## Etc..
+
+자바스크립트는 웹 브라우저를 프로그래밍적으로 제어하기 위해 고안된 언어이다.
+
+데이터베이스, 프레임워크, 모듈, API 
+
+Node.js AWESOME 검색
+
+---
